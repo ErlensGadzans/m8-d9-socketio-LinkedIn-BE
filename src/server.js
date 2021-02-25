@@ -5,11 +5,14 @@ const services = require("./services");
 require("dotenv").config();
 mongoose.set("useCreateIndex", true);
 mongoose.set("useFindAndModify", false);
-
 const { errorMiddleware } = require("./errorMiddleware");
 const { errorHandler } = require("./errorHandling");
+const createSocketServer = require("../src/socket"); //1 STEP
+const http = require("http"); //2 STEP
 
 const server = express();
+const httpServer = http.createServer(server); //3 STEP
+createSocketServer(httpServer); //4 STEP
 
 const port = process.env.PORT || 3001;
 
@@ -33,7 +36,8 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(
-    server.listen(port, () => {
+    httpServer.listen(port, () => {
+      //5 STEP
       console.log("Server is running on port: ", port);
     })
   );
